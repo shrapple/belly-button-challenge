@@ -1,33 +1,35 @@
 const url = 'https://2u-data-curriculum-team.s3.amazonaws.com/dataviz-classroom/v1.1/14-Interactive-Web-Visualizations/02-Homework/samples.json'
 
-const directory = document.getElementById('selDataset');
-let selectedId = '';
 
 function optionChanged(){
-    let selectedId = directory.value;
+    let selectedId = document.getElementById('selDataset').value;
     
     d3.json(url).then(response => {
-        let samples = response.samples[0]
-        let names = response.samples.find(item => item.id === selectedId);
-        let otuIds = names.otu_ids;
-        let sampleValues = names.sample_values;
-        let otuLabels = names.otu_labels;
+        let samples = response.samples[0];
+        let name = response.samples.find(item => item.id === selectedId);
+        let otuIds = name.otu_ids;
+        let sampleValues = name.sample_values;
+        let otuLabels = name.otu_labels;
 
-        let trace1 = {
+        let barData = [{
             x: sampleValues.slice(0, 10).reverse(),
             y: otuIds.map(id => `OTU ${id}`).slice(0, 10).reverse(),
             type: 'bar',
             orientation: 'h'
-        };
+        }];
 
-        let layout = {
-            autosize: true,
-        };
+        let barLayout = {
+            autosize: true,};
 
-        let data = [trace1];
+    Plotly.newPlot('bar', barData, barLayout);
 
-        Plotly.newPlot('bar', data, layout);
-
+            
+    let ethnicity = name.ethnicity;
+    let gender = name.gender;
+    let age = name.age;
+    let location = name.location;
+    let bbtype = name.bbtype;
+    let wfreq = name.wfreq;
     });
 }
 
@@ -35,11 +37,11 @@ function populateDropdown(names) {
         for (let i = 0; i < names.length; i++) {
             let option = document.createElement('option');
             option.text = names[i];
-            directory.add(option);
+            document.getElementById('selDataset').add(option);
         }
     };
 
-directory.addEventListener('change', optionChanged);
+document.getElementById('selDataset').addEventListener('change', optionChanged);
 
 d3.json(url).then(response => {
     let samples = response.samples;
@@ -47,7 +49,7 @@ d3.json(url).then(response => {
     populateDropdown(names);
 });
 
-directory.removeEventListener('change', optionChanged);
+document.getElementById('selDataset').removeEventListener('change', optionChanged);
 
 d3.json(url).then(response => {
     let samples = response.samples[0];
@@ -65,8 +67,10 @@ d3.json(url).then(response => {
     },
     text: otuLabels,
     }];
+    
+    let bubbleLayout = {
+        autosize: true,
+    };
 
-Plotly.newPlot('bubble', bubbleData);
+Plotly.newPlot('bubble', bubbleData, bubbleLayout);
 });
-
-directory.addEventListener('change', optionChanged);
