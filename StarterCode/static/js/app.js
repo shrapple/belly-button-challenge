@@ -7,9 +7,11 @@ function optionChanged(){
     let selectedId = directory.value;
     
     d3.json(url).then(response => {
-        let samples = response.samples.find(item => item.id === selectedId);
+        let samples = response.samples
+        let names = response.samples.find(item => item.id === selectedId);
         let otuIds = samples.otu_ids;
         let sampleValues = samples.sample_values;
+        let otuLabels = samples.otu_labels;
 
         let trace1 = {
             x: sampleValues.slice(0, 10).reverse(),
@@ -25,12 +27,13 @@ function optionChanged(){
         let data = [trace1];
 
         Plotly.newPlot('bar', data, layout);
+
     });
 }
 
 function populateDropdown(names) {
         for (let i = 0; i < names.length; i++) {
-            const option = document.createElement('option');
+            let option = document.createElement('option');
             option.text = names[i];
             directory.add(option);
         }
@@ -43,3 +46,27 @@ d3.json(url).then(response => {
     let names = samples.map(item => item.id);
     populateDropdown(names);
 });
+
+directory.removeEventListener('change', optionChanged);
+
+d3.json(url).then(response => {
+    let samples = response.samples[0];
+    let otuIds = samples.otu_ids;
+    let sampleValues = samples.sample_values;
+    let otuLabels = samples.otu_labels;
+
+    let bubbleData = [{
+    x: otuIds,
+    y: sampleValues,
+    mode: 'markers',
+    marker: {
+        size: sampleValues,
+        color: otuIds,
+    },
+    text: otuLabels,
+    }];
+
+Plotly.newPlot('bubble', bubbleData);
+});
+
+directory.addEventListener('change', optionChanged);
