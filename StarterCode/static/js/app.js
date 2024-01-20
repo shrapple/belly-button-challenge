@@ -7,11 +7,11 @@ function optionChanged(){
     let selectedId = directory.value;
     
     d3.json(url).then(response => {
-        let samples = response.samples
+        let samples = response.samples[0]
         let names = response.samples.find(item => item.id === selectedId);
-        let otuIds = samples.otu_ids;
-        let sampleValues = samples.sample_values;
-        let otuLabels = samples.otu_labels;
+        let otuIds = names.otu_ids;
+        let sampleValues = names.sample_values;
+        let otuLabels = names.otu_labels;
 
         let trace1 = {
             x: sampleValues.slice(0, 10).reverse(),
