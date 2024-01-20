@@ -1,30 +1,45 @@
 const url = 'https://2u-data-curriculum-team.s3.amazonaws.com/dataviz-classroom/v1.1/14-Interactive-Web-Visualizations/02-Homework/samples.json'
 
-d3.json(url).then(response => {
-    let samples = response.samples;
-    // console.log(samples);
-    let otuIds = samples.map((item) => item.otu_ids);
-    let sampleValues = samples.map((item) => item.sample_values);
-    // console.log(sampleValues);
-    let trace1 = {
-    x: otuIds,
-    y: sampleValues,
-    type: 'bar'
+const directory = document.getElementById('selDataset');
+let selectedId = '';
+
+function optionChanged(){
+    let selectedId = directory.value;
+    
+    d3.json(url).then(response => {
+        let samples = response.samples.find(item => item.id === selectedId);
+        let otuIds = samples.otu_ids;
+        let sampleValues = samples.sample_values;
+
+        let trace1 = {
+            x: sampleValues.slice(0, 10).reverse(),
+            y: otuIds.map(id => `OTU ${id}`).slice(0, 10).reverse(),
+            type: 'bar',
+            orientation: 'h'
+        };
+
+        let layout = {
+            autosize: true,
+        };
+
+        let data = [trace1];
+
+        Plotly.newPlot('bar', data, layout);
+    });
+}
+
+function populateDropdown(names) {
+        for (let i = 0; i < names.length; i++) {
+            const option = document.createElement('option');
+            option.text = names[i];
+            directory.add(option);
+        }
     };
 
-    data = [trace1];
-  
-    Plotly.newPlot('bar', data);
+directory.addEventListener('change', optionChanged);
+
+d3.json(url).then(response => {
+    let samples = response.samples;
+    let names = samples.map(item => item.id);
+    populateDropdown(names);
 });
-// d3.selectAll('#selDataset').on('change', updateDrop);
-
-// let labels = Object.keys(data.unique);
-
-// let selector = d3.select('body').append('select');
-// Object.keys(data).map((label) => {selector.append('option').text(label)});
-
-
-// function updateDrop(){
-//     let dropdownMenu = d3.select('#selDataset');
-//     let dataset = dropdownMenu.property('value')
-// }
