@@ -21,8 +21,7 @@ function optionChanged(){
         }];
 
         let barLayout = {
-            autosize: true,
-                width: 800};
+            autosize: true,};
 
     Plotly.newPlot('bar', barData, barLayout);
 
@@ -60,7 +59,8 @@ function optionChanged(){
 
       // Update the sample-metadata div with the table data
       let metadataDiv = document.getElementById('sample-metadata');
-      metadataDiv.innerHTML = tableData;};});};
+      metadataDiv.innerHTML = tableData;}; 
+});};
 
 function populateDropdown(names) {
     for (let i = 0; i < names.length; i++) {
@@ -102,4 +102,3 @@ d3.json(url).then(response => {
 
     Plotly.newPlot('bubble', bubbleData, bubbleLayout);
 });
-
